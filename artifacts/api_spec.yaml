@@ -1,0 +1,91 @@
+openapi: 3.0.0
+info:
+  title: Smart Toaster API
+  version: 1.0.0
+  description: API для управления умным тостером
+servers:
+  - url: http://localhost:8000/api
+paths:
+  /toaster/start:
+    post:
+      summary: Запуск поджарки
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                level:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                  example: 3
+                time:
+                  type: integer
+                  minimum: 30
+                  maximum: 600
+                  description: Время поджарки в секундах
+                  example: 120
+      responses:
+        '200':
+          description: Поджарка запущена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartResponse'
+
+  /toaster/status:
+    get:
+      summary: Получить статус тостера
+      responses:
+        '200':
+          description: Текущий статус
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+
+  /toaster/stop:
+    post:
+      summary: Прервать поджарку
+      responses:
+        '200':
+          description: Поджарка остановлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StopResponse'
+
+components:
+  schemas:
+    StartResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Toasting started"
+        status:
+          type: string
+          example: "working"
+
+    StatusResponse:
+      type: object
+      properties:
+        state:
+          type: string
+          enum: [idle, working, done, error]
+          example: "working"
+        time_left:
+          type: integer
+          example: 75
+
+    StopResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Toasting stopped"
+        status:
+          type: string
+          example: "idle"
